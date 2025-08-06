@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer, util
 @st.cache_resource
 def load_model_and_data():
     df = pd.read_csv("books.csv")
-    embeddings = torch.load("embeddings.pt", map_location=torch.device("cpu"))
+    embeddings = torch.load("book_embeddings.pt", map_location=torch.device("cuda"))
     model = SentenceTransformer("all-MiniLM-L6-v2")
     return df, embeddings, model
 
@@ -33,7 +33,7 @@ def recommend_books():
     if year:
         df_filtered = df_filtered[df_filtered["original_pubication_year"] >= year]
     if author:
-        df_filtered = df_filtered[df_filtered["author"].str.contains(author, case=False, na=False)]
+        df_filtered = df_filtered[df_filtered["authors"].str.contains(author, case=False, na=False)]
 
     matches = df[df["title"].str.lower() == title.lower()]
     if matches.empty:
@@ -58,7 +58,7 @@ if st.button("Recommend"):
         for _, row in results.iterrows():
             st.markdown(f"""
             ### 📖 {row['title']}
-            - ✍️ Author: {row['author']}
+            - ✍️ Author: {row['authors']}
             - ⭐ Rating: {row['average_rating']}
             - 📅 Year: {int(row['original_publication_year'])}
             - 🌐 Language: {row['language_code']}
