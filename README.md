@@ -2,6 +2,7 @@
 Welcome to the BERT-powered Book Recommender, a content-based recommendation system that suggests books similar to a given title using deep semantic understanding (via BERT embeddings). Built with torch, sentence transformers and rapidfuzz and deployed on Streamlit.
 
  **Features:**
+ 
  **Fuzzy Matching:** Intelligent title matching using partial input (e.g., "Harry Potter" finds "Harry Potter: The Goblet of Fire").
 
  **BERT Embeddings:** Uses sentence-transformers to understand semantic similarity in book descriptions.
