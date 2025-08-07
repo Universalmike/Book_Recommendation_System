@@ -66,7 +66,7 @@ def recommend_books(input_title, top_n=5, min_rating=None, lang=None, year=None,
 
 # Display results
 if st.button("Recommend"):
-    results, best_match = recommend_books(user_title, top_n, min_rating, lang, year, author)
+    results, best_match = recommend_books(title, top_n, min_rating, lang, year, author)
 
     if best_match:
         st.success(f"Showing results based on closest match: **{best_match}**")
