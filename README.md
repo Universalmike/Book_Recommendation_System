@@ -62,6 +62,7 @@ author: Author name
 You can easily adapt the script to work with other datasets in similar formats.
 
  **Credits**
+ 
 Sentence-Transformers
 
 RapidFuzz
