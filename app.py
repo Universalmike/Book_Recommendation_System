@@ -52,8 +52,7 @@ def recommend_books(input_title, top_n=5, min_rating=None, lang=None, year=None,
     if df_filtered.empty:
         st.warning("No books match the filter criteria.")
         return pd.DataFrame(), best_title
-
-    idx = matches.index[0]
+        
     query_vec = embeddings[idx].unsqueeze(0)
     filtered_indices = df_filtered.index
     filtered_embeds = embeddings[filtered_indices]
