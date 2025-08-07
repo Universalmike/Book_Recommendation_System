@@ -34,7 +34,7 @@ def recommend_books():
     if lang:
         df_filtered = df_filtered[df_filtered["language_code"] == lang]
     if year:
-        df_filtered = df_filtered[df_filtered["original_pubication_year"] >= year]
+        df_filtered = df_filtered[df_filtered["original_publication_year"] >= year]
     if author:
         df_filtered = df_filtered[df_filtered["authors"].str.contains(author, case=False, na=False)]
 
