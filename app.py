@@ -61,7 +61,7 @@ if st.button("Recommend"):
         for _, row in results.iterrows():
             st.markdown(f"""
             ### 📖 {row['title']}
-            - ✍️ Author: {row['authors']}
+            - ✍️ Author: {row['author']}
             - ⭐ Rating: {row['average_rating']}
             - 📅 Year: {int(row['original_publication_year'])}
             - 🌐 Language: {row['language_code']}
