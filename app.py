@@ -10,7 +10,7 @@ def load_model_and_data():
     df = df[['title', 'description', 'average_rating', 'original_publication_year', 'language_code']].dropna()
     df = df[df['description'].str.strip() != '']
     df = df.drop_duplicates(subset='title').reset_index(drop=True)
-    embeddings = torch.load("book_embeddings.pt", map_location=torch.device("cuda"))
+    embeddings = torch.load("book_embeddings.pt", map_location=torch.device("cpu"))
     model = SentenceTransformer("all-MiniLM-L6-v2")
     return df, embeddings, model
 
