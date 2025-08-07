@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer, util
 @st.cache_resource
 def load_model_and_data():
     df = pd.read_csv("book.csv")
-    df = df[['title', 'description', 'average_rating', 'author', 'original_publication_year', 'language_code']].dropna()
+    df = df[['title', 'description', 'average_rating', 'authors', 'original_publication_year', 'language_code']].dropna()
     df = df[df['description'].str.strip() != '']
     df = df.drop_duplicates(subset='title').reset_index(drop=True)
     embeddings = torch.load("book_embeddings.pt", map_location=torch.device("cpu"))
@@ -61,7 +61,7 @@ if st.button("Recommend"):
         for _, row in results.iterrows():
             st.markdown(f"""
             ### 📖 {row['title']}
-            - ✍️ Author: {row['author']}
+            - ✍️ Author: {row['authors']}
             - ⭐ Rating: {row['average_rating']}
             - 📅 Year: {int(row['original_publication_year'])}
             - 🌐 Language: {row['language_code']}
