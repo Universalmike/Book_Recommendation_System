@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import torch
 from sentence_transformers import SentenceTransformer, util
+from rapidfuzz import process
 
 # Load everything once
 @st.cache_resource
@@ -16,6 +17,12 @@ def load_model_and_data():
 
 df, embeddings, model = load_model_and_data()
 
+# Get the best title match using fuzzy logic
+def get_best_title_match(input_title):
+    titles = df["title"].tolist()
+    match, score, idx = process.extractOne(input_title, titles, score_cutoff=50)
+    return match, idx, score
+
 st.title("📚 Book Recommendation")
 
 # Input from user
@@ -27,7 +34,11 @@ year = st.number_input("Published after year", min_value=0, max_value=3000, valu
 author = st.text_input("Author (optional)", "")
 
 # Recommendation logic
-def recommend_books():
+def recommend_books(input_title, top_n=5, min_rating=None, lang=None, year=None, author=None):
+    best_title, idx, score = get_best_title_match(input_title)
+    if best_title is None:
+        st.warning(f"No matching book title found for '{input_title}'")
+        return pd.DataFrame(), None
     df_filtered = df.copy()
     if min_rating:
         df_filtered = df_filtered[df_filtered["average_rating"] >= min_rating]
@@ -38,10 +49,9 @@ def recommend_books():
     if author:
         df_filtered = df_filtered[df_filtered["authors"].str.contains(author, case=False, na=False)]
 
-    matches = df[df["title"].str.lower() == title.lower()]
-    if matches.empty:
-        st.warning("❌ Book title not found in dataset.")
-        return []
+    df_filtered.empty:
+        st.warning("No books match the filter criteria.")
+        return pd.DataFrame(), best_title
 
     idx = matches.index[0]
     query_vec = embeddings[idx].unsqueeze(0)
@@ -52,11 +62,14 @@ def recommend_books():
     top_scores = torch.topk(sim_scores, k=min(top_n, len(filtered_indices)))
     top_indices = filtered_indices[top_scores.indices.cpu().numpy()].tolist()
 
-    return df_filtered.loc[top_indices]
+    return df_filtered.loc[top_indices], best_title
 
 # Display results
 if st.button("Recommend"):
-    results = recommend_books()
+    results, best_match = recommend_books(user_title, top_n, min_rating, lang, year, author)
+
+    if best_match:
+        st.success(f"Showing results based on closest match: **{best_match}**")
     if not results.empty:
         for _, row in results.iterrows():
             st.markdown(f"""
@@ -65,7 +78,7 @@ if st.button("Recommend"):
             - ⭐ Rating: {row['average_rating']}
             - 📅 Year: {int(row['original_publication_year'])}
             - 🌐 Language: {row['language_code']}
-            - 📝 Description: {row['description'][:500]}...
+            - 📝 Description: {row['description'][:1000]}...
             ---
             """)
     else:
