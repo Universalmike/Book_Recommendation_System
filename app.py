@@ -49,7 +49,7 @@ def recommend_books(input_title, top_n=5, min_rating=None, lang=None, year=None,
     if author:
         df_filtered = df_filtered[df_filtered["authors"].str.contains(author, case=False, na=False)]
 
-    df_filtered.empty:
+    if df_filtered.empty:
         st.warning("No books match the filter criteria.")
         return pd.DataFrame(), best_title
 
